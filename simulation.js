@@ -1,19 +1,19 @@
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
-canvas.width = window.innerWidth*0.8;
-canvas.height = window.innerHeight*0.8;
+const canvas = document.getElementById('canvas')
+const ctx = canvas.getContext('2d')
+canvas.width = window.innerWidth*0.8
+canvas.height = window.innerHeight*0.8
 
 // Variables pour stocker des objets de la simulation
-let objets = [];
+let objets = []
 
 // Fonction pour lancer l'animation
 function animate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);  // Effacer le canvas à chaque frame
     objets.forEach(objet => {
-        objet.update();
-        objet.draw();
-    });
-    requestAnimationFrame(animate);  // Appel récursif pour une animation continue
+        objet.update()
+        objet.draw()
+    })
+    requestAnimationFrame(animate)  // Appel récursif pour une animation continue
 }
 
 let settings = {
@@ -61,17 +61,44 @@ class Particule {
         }
         this.vy += settings.gravity/25
         if(this.x + this.vx + this.rayon > canvas.width || this.x + this.vx - this.rayon < 0){//si on atteind un bord
-            this.vx = -this.vx;  // Inverser la vitesse
+            this.checkCollision()
+            this.vx = -this.vx  // Inverser la vitesse
+            this.x += this.vx
         }else{
-            this.x += this.vx;
+            this.checkCollision()
+            this.x += this.vx
         }
         if(this.y + this.vy + this.rayon > canvas.height || this.y + this.vy - this.rayon < 0){//si on atteind un bord
-            this.vy = -this.vy;  // Inverser la vitesse
+            this.checkCollision()
+            this.vy = -this.vy  // Inverser la vitesse
+            this.y += this.vy
         }else{
-            this.y += this.vy;
+            this.checkCollision()
+            this.y += this.vy
         }
         this.vy -= this.vy*(settings.friction/1000)
         this.vx -= this.vx*(settings.friction/1000)
+    }
+
+    checkCollision(){
+        for (let i = 0; i < objets.length; i++) {
+            if(objets[i] == this)continue
+            const dx = this.x - objets[i].x;
+            const dy = this.y - objets[i].y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            if (distance < objets[i].rayon + this.rayon) {
+                // Collision détectée
+                let savevx = this.vx
+                let savevy = this.vy
+                const angle = Math.atan2(dy, dx);
+                this.vx = objets[i].vx//-Math.cos(angle);
+                this.vy = objets[i].vy//-Math.sin(angle);
+                objets[i].vx = savevx
+                objets[i].vy = savevy
+                objets[i].x += objets[i].vx
+                objets[i].y += objets[i].vy
+            }
+        }
     }
 }
 
