@@ -7,7 +7,8 @@ let settings = {
     "friction" : document.getElementById("frictionInput").value,
     "freezeState" : false,
     "gravity" : document.getElementById("gravityInput").value,
-    "collision" : document.getElementById("collisionInput").checked
+    "collision" : document.getElementById("collisionInput").checked,
+    "speed" : document.getElementById("speedInput").value
 }
 
 document.getElementById("frictionInput").addEventListener("change",(e)=>{settings.friction = e.target.value})
@@ -25,6 +26,8 @@ document.getElementById("freezeButton").addEventListener("click",(e)=>{
 document.getElementById("gravityInput").addEventListener("change",(e)=>{settings.gravity = e.target.value})
 
 document.getElementById("collisionInput").addEventListener("change",(e)=>{settings.collision = e.target.checked})
+
+document.getElementById("speedInput").addEventListener("change",(e)=>{settings.speed = e.target.value})
 
 class Particule {
     constructor(x, y, vx, vy, rayon, couleur) {
@@ -107,8 +110,8 @@ class Game{
             if(this.objets[i].y + this.objets[i].vy + this.objets[i].rayon > canvas.height || this.objets[i].y + this.objets[i].vy - this.objets[i].rayon < 0){state = false}
             if(this.objets[i].x + this.objets[i].vx + this.objets[i].rayon > canvas.width || this.objets[i].x + this.objets[i].vx - this.objets[i].rayon < 0){state = false}
             if(!state){continue}
-            this.objets[i].y += this.objets[i].vy
-            this.objets[i].x += this.objets[i].vx
+            this.objets[i].y += this.objets[i].vy*settings.speed
+            this.objets[i].x += this.objets[i].vx*settings.speed
         }
     }
 }
