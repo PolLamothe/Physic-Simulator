@@ -41,15 +41,25 @@ document.getElementById("canvas").addEventListener("mousedown", async (e)=>{
 
 document.getElementById("canvas").addEventListener("mouseup", (e)=>{
     isMousedPressed = false
+    let xDiff = mouseX-previousX
+    let yDiff = mouseY-previousY
     for(let i = 0;i<game.objets.length;i++){
+        if(game.objets[i].dragged){
+            game.objets[i].vx = xDiff/2
+            game.objets[i].vy = yDiff/2
+        }
         game.objets[i].dragged = false
     }
 })
 
-let mouseX = 0
-let mouseY = 0
+let mouseX = null
+let mouseY = null
+let previousX = null
+let previousY = null
 
 document.getElementById("canvas").addEventListener("mousemove", (e)=>{
+    previousX = mouseX
+    previousY = mouseY
     mouseX = e.clientX
     mouseY = e.clientY
 })
@@ -77,6 +87,9 @@ class Particule {
     }
 
     update() {
+        if(settings.freezeState){
+            return
+        }
         this.vy += settings.gravity/25
         if(this.x + this.vx + this.rayon > canvas.width || this.x + this.vx - this.rayon < 0){//si on atteind un bord
             this.vx *= -1  // Inverser la vitesse
