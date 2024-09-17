@@ -28,7 +28,9 @@
         }
         #settingsDiv div{
             width: fit-content;
-
+            align-items: center;
+            display: flex;
+            flex-direction: column;
         }
     </style>
 </head>
@@ -42,6 +44,10 @@
         <div>
             <p>Gravity</p>
             <input type="range" min="0" max="10" value="0" id="gravityInput">
+        </div>
+        <div>
+            <p>Collision</p>
+            <input type="checkbox" id="collisionInput">
         </div>
     </div>
     <canvas id="canvas"></canvas>

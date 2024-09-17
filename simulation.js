@@ -7,6 +7,7 @@ let settings = {
     "friction" : document.getElementById("frictionInput").value,
     "freezeState" : false,
     "gravity" : document.getElementById("gravityInput").value,
+    "collision" : document.getElementById("collisionInput").checked
 }
 
 document.getElementById("frictionInput").addEventListener("change",(e)=>{settings.friction = e.target.value})
@@ -22,6 +23,8 @@ document.getElementById("freezeButton").addEventListener("click",(e)=>{
 })
 
 document.getElementById("gravityInput").addEventListener("change",(e)=>{settings.gravity = e.target.value})
+
+document.getElementById("collisionInput").addEventListener("change",(e)=>{settings.collision = e.target.checked})
 
 class Particule {
     constructor(x, y, vx, vy, rayon, couleur) {
@@ -52,7 +55,7 @@ class Particule {
         if(this.y + this.vy + this.rayon > canvas.height || this.y + this.vy - this.rayon < 0){//si on atteind un bord
             this.vy *= -1 // Inverser la vitesse
         }
-        this.checkCollision()
+        if(settings.collision == true){this.checkCollision()}
         this.vy -= this.vy*(settings.friction/1000)
         this.vx -= this.vx*(settings.friction/1000)
     }
@@ -60,8 +63,8 @@ class Particule {
     checkCollision(){
         for (let i = 0; i < game.objets.length; i++) {
             if(game.objets[i] == this)continue
-            var dx = this.x - game.objets[i].x
-            var dy = this.y - game.objets[i].y
+            var dx = (this.x + this.vx) - (game.objets[i].x + game.objets[i].vx)
+            var dy = (this.y + this.vy) - (game.objets[i].y + game.objets[i].vy)
             var distance = Math.sqrt(dx * dx + dy * dy)
             if (distance < game.objets[i].rayon + this.rayon) {
                 // Collision détectée
@@ -80,8 +83,8 @@ class Game{
             const rayon = 20;
             const x = Math.random() * (canvas.width - 2 * rayon) + rayon;
             const y = Math.random() * (canvas.height - 2 * rayon) + rayon;
-            const vx = (Math.random() - 0.5) * 10
-            const vy = (Math.random() - 0.5) * 10
+            const vx = (Math.random() - 0.5) * 20
+            const vy = (Math.random() - 0.5) * 20
             const couleur = 'blue';
             this.objets.push(new Particule(x, y, vx, vy, rayon, couleur));
         }
@@ -100,6 +103,10 @@ class Game{
                 this.objets[i].vy = this.objets[i].newVy
                 this.objets[i].newVy = null
             }
+            let state = true
+            if(this.objets[i].y + this.objets[i].vy + this.objets[i].rayon > canvas.height || this.objets[i].y + this.objets[i].vy - this.objets[i].rayon < 0){state = false}
+            if(this.objets[i].x + this.objets[i].vx + this.objets[i].rayon > canvas.width || this.objets[i].x + this.objets[i].vx - this.objets[i].rayon < 0){state = false}
+            if(!state){continue}
             this.objets[i].y += this.objets[i].vy
             this.objets[i].x += this.objets[i].vx
         }
