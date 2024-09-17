@@ -29,6 +29,31 @@ document.getElementById("collisionInput").addEventListener("change",(e)=>{settin
 
 document.getElementById("speedInput").addEventListener("change",(e)=>{settings.speed = e.target.value})
 
+let isMousedPressed = false
+
+document.getElementById("canvas").addEventListener("mousedown", async (e)=>{
+    isMousedPressed = true
+    while(isMousedPressed){
+        await new Promise(r => setTimeout(r, 1));
+        game.checkDrag()
+    }
+})
+
+document.getElementById("canvas").addEventListener("mouseup", (e)=>{
+    isMousedPressed = false
+    for(let i = 0;i<game.objets.length;i++){
+        game.objets[i].dragged = false
+    }
+})
+
+let mouseX = 0
+let mouseY = 0
+
+document.getElementById("canvas").addEventListener("mousemove", (e)=>{
+    mouseX = e.clientX
+    mouseY = e.clientY
+})
+
 class Particule {
     constructor(x, y, vx, vy, rayon, couleur) {
         this.x = x;       // Position x
@@ -40,6 +65,7 @@ class Particule {
         this.rayon = rayon;
         this.couleur = couleur;
         this.freeze = false
+        this.dragged = false
     }
 
     draw() {
@@ -89,7 +115,8 @@ class Game{
             const vx = (Math.random() - 0.5) * 20
             const vy = (Math.random() - 0.5) * 20
             const couleur = 'blue';
-            this.objets.push(new Particule(x, y, vx, vy, rayon, couleur));
+            const particle = new Particule(x, y, vx, vy, rayon, couleur);
+            this.objets.push(particle);
         }
     }
 
@@ -112,7 +139,32 @@ class Game{
             if(!state){continue}
             this.objets[i].y += this.objets[i].vy*settings.speed
             this.objets[i].x += this.objets[i].vx*settings.speed
+            if(this.objets[i].dragged){
+                this.objets[i].x = mouseX-(canvas.offsetLeft-canvas.offsetWidth/2)
+                this.objets[i].y = mouseY-(canvas.offsetTop)
+            }
         }
+    }
+
+    checkDrag(){
+        var relativeX =null
+        var relativeY = null
+        if(isMousedPressed){
+            relativeX = mouseX-(canvas.offsetLeft-canvas.offsetWidth/2)
+            relativeY = mouseY-(canvas.offsetTop)
+        }
+        for(let i = 0;i<this.objets.length;i++){
+            if((relativeX >= this.objets[i].x-this.objets[i].rayon && relativeX <= this.objets[i].x+this.objets[i].rayon) && (relativeY >= this.objets[i].y-this.objets[i].rayon && relativeY <= this.objets[i].y+this.objets[i].rayon)){
+                var state = true
+                for(let j = 0;j<this.objets.length;j++){
+                    if(this.objets[j].dragged){
+                        state = false
+                    }
+                }
+                if(!state)return
+                this.objets[i].dragged = true
+            }
+        }       
     }
 }
 
