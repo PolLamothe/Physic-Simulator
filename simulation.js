@@ -30,15 +30,7 @@ document.getElementById("collisionInput").addEventListener("change",(e)=>{settin
 document.getElementById("speedInput").addEventListener("change",(e)=>{settings.speed = e.target.value})
 
 document.getElementById("spawnButton").addEventListener("click",(e)=>{
-    const rayon = 20
-    var coord =  game.generateFreeXY()
-    const x = coord[0]
-    const y = coord[1]
-    const vx = (Math.random() - 0.5) * 20
-    const vy = (Math.random() - 0.5) * 20
-    const couleur = 'blue'
-    const particle = new Particule(x, y, vx, vy, rayon, couleur)
-    game.objets.push(particle)
+    game.generateBall()
 })
 
 let isMousedPressed = false
@@ -69,7 +61,7 @@ let mouseY = null
 let previousX = null
 let previousY = null
 
-document.getElementById("canvas").addEventListener("mousemove", (e)=>{
+window.addEventListener("mousemove", (e)=>{
     previousX = mouseX
     previousY = mouseY
     mouseX = e.clientX
@@ -134,15 +126,7 @@ class Game{
     constructor(){
         this.objets = []
         for (let i = 0; i < 10; i++) {
-            const rayon = 20;
-            var coord =  this.generateFreeXY()
-            const x = coord[0]
-            const y = coord[1]
-            const vx = (Math.random() - 0.5) * 20
-            const vy = (Math.random() - 0.5) * 20
-            const couleur = 'blue'
-            const particle = new Particule(x, y, vx, vy, rayon, couleur);
-            this.objets.push(particle);
+            this.generateBall()
         }
     }
 
@@ -166,6 +150,11 @@ class Game{
             this.objets[i].y += this.objets[i].vy*settings.speed
             this.objets[i].x += this.objets[i].vx*settings.speed
             if(this.objets[i].dragged){
+                var rayon = this.objets[i].rayon
+                if(mouseX-(canvas.offsetLeft-canvas.offsetWidth/2)-rayon < 0 || mouseX-(canvas.offsetLeft-canvas.offsetWidth/2)+rayon > canvas.width || mouseY-(canvas.offsetTop)-rayon < 0 || mouseY-(canvas.offsetTop)+rayon > canvas.height){
+                    this.objets[i].dragged = false
+                    continue
+                }
                 this.objets[i].x = mouseX-(canvas.offsetLeft-canvas.offsetWidth/2)
                 this.objets[i].y = mouseY-(canvas.offsetTop)
             }
@@ -213,6 +202,18 @@ class Game{
                 return [x,y]
             }
         }
+    }
+
+    generateBall(){
+        const rayon = 20
+        var coord =  this.generateFreeXY()
+        const x = coord[0]
+        const y = coord[1]
+        const vx = (Math.random() - 0.5) * 20
+        const vy = (Math.random() - 0.5) * 20
+        const couleur = 'blue'
+        const particle = new Particule(x, y, vx, vy, rayon, couleur)
+        this.objets.push(particle)
     }
 }
 
