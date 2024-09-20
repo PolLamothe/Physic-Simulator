@@ -29,6 +29,18 @@ document.getElementById("collisionInput").addEventListener("change",(e)=>{settin
 
 document.getElementById("speedInput").addEventListener("change",(e)=>{settings.speed = e.target.value})
 
+document.getElementById("spawnButton").addEventListener("click",(e)=>{
+    const rayon = 20
+    var coord =  game.generateFreeXY()
+    const x = coord[0]
+    const y = coord[1]
+    const vx = (Math.random() - 0.5) * 20
+    const vy = (Math.random() - 0.5) * 20
+    const couleur = 'blue'
+    const particle = new Particule(x, y, vx, vy, rayon, couleur)
+    game.objets.push(particle)
+})
+
 let isMousedPressed = false
 
 document.getElementById("canvas").addEventListener("mousedown", async (e)=>{
@@ -66,14 +78,14 @@ document.getElementById("canvas").addEventListener("mousemove", (e)=>{
 
 class Particule {
     constructor(x, y, vx, vy, rayon, couleur) {
-        this.x = x;       // Position x
-        this.y = y;       // Position y
-        this.vx = vx;     // Vitesse en x
-        this.vy = vy;     // Vitesse en y
+        this.x = x       // Position x
+        this.y = y      // Position y
+        this.vx = vx     // Vitesse en x
+        this.vy = vy     // Vitesse en y
         this.newVx = null
         this.newVy = null
-        this.rayon = rayon;
-        this.couleur = couleur;
+        this.rayon = rayon
+        this.couleur = couleur
         this.freeze = false
         this.dragged = false
     }
@@ -123,11 +135,12 @@ class Game{
         this.objets = []
         for (let i = 0; i < 10; i++) {
             const rayon = 20;
-            const x = Math.random() * (canvas.width - 2 * rayon) + rayon;
-            const y = Math.random() * (canvas.height - 2 * rayon) + rayon;
+            var coord =  this.generateFreeXY()
+            const x = coord[0]
+            const y = coord[1]
             const vx = (Math.random() - 0.5) * 20
             const vy = (Math.random() - 0.5) * 20
-            const couleur = 'blue';
+            const couleur = 'blue'
             const particle = new Particule(x, y, vx, vy, rayon, couleur);
             this.objets.push(particle);
         }
@@ -178,6 +191,28 @@ class Game{
                 this.objets[i].dragged = true
             }
         }       
+    }
+
+    generateFreeXY(){
+        let x = null
+        let y = null
+        var rayon = 20
+        while(true){
+            x = Math.random() * (canvas.width - 2 * rayon) + rayon;
+            y = Math.random() * (canvas.height - 2 * rayon) + rayon;
+            var state = true
+            for(let j = 0;j<this.objets.length;j++){
+                if(this.objets[j].x == null || this.objets[j].x == NaN || this.objets[j].y == null || this.objets[j].y == NaN)continue
+                if((this.objets[j].x + rayon < x - rayon || this.objets[j].x - rayon > x + rayon) || (this.objets[j].y + rayon < y - rayon || this.objets[j].y - rayon > y + rayon)){
+                    
+                }else{
+                    state = false
+                }
+            }
+            if(state){
+                return [x,y]
+            }
+        }
     }
 }
 
