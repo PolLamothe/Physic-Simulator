@@ -109,12 +109,9 @@ class Particule {
     checkCollision(){
         for (let i = 0; i < game.objets.length; i++) {
             if(game.objets[i] == this)continue
-            var dx = (this.x + this.vx) - (game.objets[i].x + game.objets[i].vx)
-            var dy = (this.y + this.vy) - (game.objets[i].y + game.objets[i].vy)
-            var distance = Math.sqrt(dx * dx + dy * dy)
-            if (distance < game.objets[i].rayon + this.rayon) {
+            if(game.checkCollision2Balls(this,game.objets[i])){
                 // Collision détectée
-                const angle = Math.atan2(dy, dx)
+                //const angle = Math.atan2(dy, dx)
                 this.newVx = game.objets[i].vx
                 this.newVy = game.objets[i].vy
             }
@@ -143,10 +140,15 @@ class Game{
                 this.objets[i].vy = this.objets[i].newVy
                 this.objets[i].newVy = null
             }
-            let state = true
-            if(this.objets[i].y + this.objets[i].vy + this.objets[i].rayon > canvas.height || this.objets[i].y + this.objets[i].vy - this.objets[i].rayon < 0){state = false}
-            if(this.objets[i].x + this.objets[i].vx + this.objets[i].rayon > canvas.width || this.objets[i].x + this.objets[i].vx - this.objets[i].rayon < 0){state = false}
-            if(!state){continue}
+            if(this.objets[i].y + this.objets[i].vy + this.objets[i].rayon > canvas.height || this.objets[i].y + this.objets[i].vy - this.objets[i].rayon < 0){continue}
+            if(this.objets[i].x + this.objets[i].vx + this.objets[i].rayon > canvas.width || this.objets[i].x + this.objets[i].vx - this.objets[i].rayon < 0){continue}
+            var state = true
+            var copy = this.objets[i]
+            for(let j=0;j<this.objets.length;j++){
+                if(j == i)continue
+                var copy2 = this.objets[j]
+                if(this.checkCollision2Balls(this.objets[i],this.objets[j])){state = false}
+            }
             this.objets[i].y += this.objets[i].vy*settings.speed
             this.objets[i].x += this.objets[i].vx*settings.speed
             if(this.objets[i].dragged){
@@ -154,9 +156,10 @@ class Game{
                 if(mouseX-(canvas.offsetLeft-canvas.offsetWidth/2)-rayon < 0 || mouseX-(canvas.offsetLeft-canvas.offsetWidth/2)+rayon > canvas.width || mouseY-(canvas.offsetTop)-rayon < 0 || mouseY-(canvas.offsetTop)+rayon > canvas.height){
                     this.objets[i].dragged = false
                     continue
+                }else{
+                    this.objets[i].x = mouseX-(canvas.offsetLeft-canvas.offsetWidth/2)
+                    this.objets[i].y = mouseY-(canvas.offsetTop)
                 }
-                this.objets[i].x = mouseX-(canvas.offsetLeft-canvas.offsetWidth/2)
-                this.objets[i].y = mouseY-(canvas.offsetTop)
             }
         }
     }
@@ -214,6 +217,17 @@ class Game{
         const couleur = 'blue'
         const particle = new Particule(x, y, vx, vy, rayon, couleur)
         this.objets.push(particle)
+    }
+
+    checkCollision2Balls(ball1,ball2){
+        var dx = (ball1.x + ball1.vx) - (ball2.x + ball2.vx)
+        var dy = (ball1.y + ball1.vy) - (ball2.y + ball2.vy)
+        var distance = Math.sqrt(dx * dx + dy * dy)
+        if (distance < ball2.rayon + ball1.rayon) {
+            return true
+            // Collision détectée
+        }  
+        return false
     }
 }
 
