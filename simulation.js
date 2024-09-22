@@ -133,10 +133,10 @@ class Game{
     }
 
     moveObject(){
-        if(settings.freezeState){
-            return
-        }
         for(let i = 0;i<this.objets.length;i++){
+            if(settings.freezeState && !this.objets[i].dragged){
+                continue
+            }
             if(this.objets[i].newVx != null){
                 this.objets[i].vx = this.objets[i].newVx
                 this.objets[i].newVx = null
