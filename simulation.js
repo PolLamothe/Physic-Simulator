@@ -11,7 +11,7 @@ let settings = {
     "speed" : document.getElementById("speedInput").value
 }
 
-document.getElementById("frictionInput").addEventListener("change",(e)=>{settings.friction = e.target.value})
+document.getElementById("frictionInput").addEventListener("input",(e)=>{settings.friction = e.target.value})
 
 document.getElementById("freezeButton").addEventListener("click",(e)=>{
     if(!settings.freezeState){
@@ -23,11 +23,14 @@ document.getElementById("freezeButton").addEventListener("click",(e)=>{
     }
 })
 
-document.getElementById("gravityInput").addEventListener("change",(e)=>{settings.gravity = e.target.value})
+document.getElementById("gravityInput").addEventListener("input",(e)=>{settings.gravity = e.target.value})
 
 document.getElementById("collisionInput").addEventListener("change",(e)=>{settings.collision = e.target.checked})
 
-document.getElementById("speedInput").addEventListener("change",(e)=>{settings.speed = e.target.value})
+document.getElementById("speedInput").addEventListener("input",(e)=>{
+    settings.speed = e.target.value
+    document.getElementById("speedText").textContent = "speed : "+e.target.value
+})
 
 document.getElementById("spawnButton").addEventListener("click",(e)=>{
     game.generateBall()
@@ -110,6 +113,8 @@ class Particule {
         for (let i = 0; i < game.objets.length; i++) {
             if(game.objets[i] == this)continue
             if(game.checkCollision2Balls(this,game.objets[i])){
+                var dx = (this.x + this.vx) - (game.objets[i].x + game.objets[i].vx)
+                var dy = (this.y + this.vy) - (game.objets[i].y + game.objets[i].vy)
                 // Collision détectée
                 //const angle = Math.atan2(dy, dx)
                 this.newVx = game.objets[i].vx
@@ -142,13 +147,6 @@ class Game{
             }
             if(this.objets[i].y + this.objets[i].vy + this.objets[i].rayon > canvas.height || this.objets[i].y + this.objets[i].vy - this.objets[i].rayon < 0){continue}
             if(this.objets[i].x + this.objets[i].vx + this.objets[i].rayon > canvas.width || this.objets[i].x + this.objets[i].vx - this.objets[i].rayon < 0){continue}
-            var state = true
-            var copy = this.objets[i]
-            for(let j=0;j<this.objets.length;j++){
-                if(j == i)continue
-                var copy2 = this.objets[j]
-                if(this.checkCollision2Balls(this.objets[i],this.objets[j])){state = false}
-            }
             this.objets[i].y += this.objets[i].vy*settings.speed
             this.objets[i].x += this.objets[i].vx*settings.speed
             if(this.objets[i].dragged){
