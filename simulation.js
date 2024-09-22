@@ -116,9 +116,10 @@ class Particule {
                 var dx = (this.x + this.vx) - (game.objets[i].x + game.objets[i].vx)
                 var dy = (this.y + this.vy) - (game.objets[i].y + game.objets[i].vy)
                 // Collision détectée
-                //const angle = Math.atan2(dy, dx)
-                this.newVx = game.objets[i].vx
-                this.newVy = game.objets[i].vy
+                const angle = Math.atan2(dy, dx)
+                var totalEnergy = Math.abs(game.objets[i].vx) + Math.abs(game.objets[i].vy)
+                this.newVx = (totalEnergy * Math.cos(angle))/(Math.abs(Math.cos(angle))+Math.abs(Math.sin(angle)))
+                this.newVy = (totalEnergy * Math.sin(angle))/(Math.abs(Math.cos(angle))+Math.abs(Math.sin(angle)))
             }
         }
     }
