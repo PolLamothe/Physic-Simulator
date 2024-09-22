@@ -23,6 +23,8 @@ document.getElementById("freezeButton").addEventListener("click",(e)=>{
     }
 })
 
+document.getElementById("speedText").textContent = "speed : "+settings.speed
+
 document.getElementById("gravityInput").addEventListener("input",(e)=>{settings.gravity = e.target.value})
 
 document.getElementById("collisionInput").addEventListener("change",(e)=>{settings.collision = e.target.checked})
@@ -228,6 +230,14 @@ class Game{
         }  
         return false
     }
+
+    getEnergyInside(){
+        var result = 0
+        for(let i = 0;i<this.objets.length;i++){
+            result += Math.abs(this.objets[i].vx)+Math.abs(this.objets[i].vy)
+        }
+        return result
+    }
 }
 
 function animate(){
@@ -237,6 +247,7 @@ function animate(){
         objet.draw();
     });
     game.moveObject()
+    document.getElementById("energyText").textContent = "Energy inside the box : "+Math.round(game.getEnergyInside())
     requestAnimationFrame(animate)
 }
 
