@@ -38,6 +38,10 @@ document.getElementById("spawnButton").addEventListener("click",(e)=>{
     game.generateBall()
 })
 
+document.getElementById("removeButton").addEventListener("click",(e)=>{
+    game.objets.pop()
+})
+
 let isMousedPressed = false
 
 document.getElementById("canvas").addEventListener("mousedown", async (e)=>{
