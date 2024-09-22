@@ -226,7 +226,6 @@ class Game{
         var distance = Math.sqrt(dx * dx + dy * dy)
         if (distance < ball2.rayon + ball1.rayon) {
             return true
-            // Collision détectée
         }  
         return false
     }
@@ -247,7 +246,7 @@ function animate(){
         objet.draw();
     });
     game.moveObject()
-    document.getElementById("energyText").textContent = "Energy inside the box : "+Math.round(game.getEnergyInside())
+    document.getElementById("energyText").textContent = "Cinetic energy inside the box : "+Math.round(game.getEnergyInside())
     requestAnimationFrame(animate)
 }
 
