@@ -124,8 +124,25 @@ class Particule {
                 // Collision détectée
                 const angle = Math.atan2(dy, dx)
                 var totalEnergy = Math.abs(game.objets[i].vx) + Math.abs(game.objets[i].vy)
-                this.newVx = (totalEnergy * Math.cos(angle))/(Math.abs(Math.cos(angle))+Math.abs(Math.sin(angle)))
-                this.newVy = (totalEnergy * Math.sin(angle))/(Math.abs(Math.cos(angle))+Math.abs(Math.sin(angle)))
+                var myEnergy = Math.abs(this.vx) + Math.abs(this.vy)
+                var strongesEnergy = Math.max(totalEnergy,myEnergy)
+                var coeff = null
+                if(strongesEnergy == totalEnergy){
+                    if(Math.abs(game.objets[i].vx) > Math.abs(game.objets[i].vy)){
+                        coeff = Math.abs(Math.cos(angle))
+                    }else{
+                        coeff = Math.abs(Math.sin(angle))
+                    }
+                }else{
+                    if(Math.abs(this.vx) > Math.abs(this.vy)){
+                        coeff = Math.abs(Math.cos(angle))
+                    }else{
+                        coeff = Math.abs(Math.sin(angle))
+                    }
+                }
+                var cosAndSinSum = Math.abs(Math.cos(angle))+Math.abs(Math.sin(angle))
+                this.newVx = ((totalEnergy*coeff * Math.cos(angle))/cosAndSinSum)+((myEnergy*(1-coeff) * Math.cos(angle))/cosAndSinSum)
+                this.newVy = ((totalEnergy*coeff * Math.sin(angle))/cosAndSinSum)+((myEnergy*(1-coeff) * Math.sin(angle))/cosAndSinSum)
             }
         }
     }
