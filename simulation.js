@@ -268,6 +268,7 @@ function animate(){
     });
     game.moveObject()
     document.getElementById("energyText").textContent = "Cinetic energy inside the box : "+Math.round(game.getEnergyInside())
+    document.getElementById("ballCountText").textContent = game.objets.length
     requestAnimationFrame(animate)
 }
 
